@@ -1,6 +1,6 @@
 #!/bin/bash
 
-CONFIG_NAME=$1
+APP_NAME=$1
 ROOT_DIR=$2
 VENV_NAME=$3
 WORKER_COUNT=$4

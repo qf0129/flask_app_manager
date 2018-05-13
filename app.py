@@ -1,24 +1,28 @@
-from flask import Flask, render_template, request
-from .app_conf import AppConfig, get_all_config_files
-from json import dumps
-from .conf_util import ConfigUtil
+import sys  
+if 'python3' not in sys.executable:
+    print('please use python3')
+    sys.exit(0)
+
 import os 
+from json import dumps
+from conf_util import ConfigUtil, get_all_configs
+from bottle import Bottle, template, request
+from threading import Thread
 
 PID_DIR = "/home/qf/work/flask_app_manager/pid/"
 
-
 def create_app():
 
-    app = Flask(__name__)
+    app = Bottle()
 
 
-    @app.route('/')
+    @app.get('/')
     def index():
-        return render_template('index.html')
+        return template('tpls/index.html')
 
-    @app.route('/configs')
+    @app.get('/configs')
     def get_configs():
-        config_names = get_all_config_files()
+        config_names = get_all_configs()
         apps = []
         for config_name in config_names:
             apps.append({
@@ -27,20 +31,23 @@ def create_app():
 
         return dumps({'code':0, 'apps':apps})
 
-    @app.route('/config_status', methods=(['POST']))
+    @app.post('/config_status')
     def config_status():
-        config_name = request.form.get('config_name')
-        config_status = request.form.get('config_status')
+        config_name = request.forms.get('config_name')
+        config_status = request.forms.get('config_status')
         if not config_name or not config_status:
             return dumps({'code': -1})
 
         if config_status == 'stop':
-            ret = stop_app(config_name)
+            t = Thread(target=stop_app,args=(config_name,))
+            # ret = stop_app(config_name)
         if config_status == 'run':
-            ret = run_app(config_name)
+            t = Thread(target=run_app,args=(config_name,))
+            # ret = run_app(config_name)
+        t.start()
 
-        if not ret:
-            return dumps({'code': -2})
+        # if not ret:
+        #     return dumps({'code': -2})
 
         return dumps({'code':0})
 
@@ -67,7 +74,6 @@ def stop_app(config_name):
 
     f = open(lock_file, 'w')
     f.close()
-
     os.system('/bin/bash scripts/stop_app.sh %s %s %s' % (config_name, pid_file, lock_file))
     return True
 
@@ -89,4 +95,10 @@ def run_app(config_name):
     os.system('/bin/bash scripts/run_app.sh %s %s %s %s %s %s %s %s %s' % (config_name, root_dir, venv_name, worker_count, host, port, wsgi_file, wsgi_obj, pid_file))
     return True
 
-app = create_app()
+if __name__ == '__main__':
+
+    if 'python3' not in sys.executable:
+        print('please use python3')
+    else:
+        app = create_app()
+        app.run(host='localhost', port=8080, debug=True)
