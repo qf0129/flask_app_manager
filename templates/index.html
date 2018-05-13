@@ -18,8 +18,19 @@
             dataType: 'json',
             success:function(Data){
                 if (Data.code==0){
-                    for (var i=0;i<Data.configs.length;i++){
-                        $('.configs_div').append('<div onclick="start_config(\''+Data.configs[i]+'\')">'+Data.configs[i]+'</div>');
+                    for (var i=0;i<Data.apps.length;i++){
+                        var app = Data.apps[i];
+                        var app_div = $('<div class="app_div"></div>');
+                        $('.configs_div').append(app_div);
+                        app_div.append('<span>'+app.name+'</span>')
+                        app_div.append('<span>  |  </span>')
+                        app_div.append('<span>'+app.status+'</span>')
+                        app_div.append('<span>  |  </span>')
+                        if(app.status=='stopped'){
+                            app_div.append('<button onclick="change_status(\''+app.name+'\', \'run\')">run</button>')
+                        }else if(app.status=='running'){
+                            app_div.append('<button onclick="change_status(\''+app.name+'\', \'stop\')">stop</button>')
+                        }
                     }
                 }else{
                     alert(Data.msg);
@@ -31,20 +42,18 @@
             }
         });
 
-        function start_config(config_name){
+        function change_status(config_name, config_status){
             $.ajax({
-                url:"/start_config",
+                url:"/config_status",
                 type:'POST',
-                data:{config_name:config_name},
+                data:{config_name:config_name, config_status:config_status},
                 cache:false,
-                processData:false,
-                contentType:false,
                 dataType: 'json',
                 success:function(Data){
                     if (Data.code==0){
-                        alert('success');
+                        location.reload();
                     }else{
-                        alert(Data.msg);
+                        alert(Data.code);
                     }
                 },
                 error:function(){

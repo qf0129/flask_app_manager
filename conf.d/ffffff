@@ -1,6 +1,0 @@
-[default]
-root = 
-worker_count = 2
-host = 127.0.0.1
-port = 7001
-
