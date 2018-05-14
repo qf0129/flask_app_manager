@@ -9,7 +9,9 @@ from conf_util import ConfigUtil, get_all_configs
 from bottle import Bottle, template, request
 from threading import Thread
 
-PID_DIR = "/home/qf/work/flask_app_manager/pid/"
+
+PID_DIR = os.getcwd() + "/pid/"
+
 
 def create_app():
 

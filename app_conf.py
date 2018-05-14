@@ -1,9 +1,7 @@
 from configparser import ConfigParser
 import os
 
-
-CONFIG_DIR = "/home/qf/work/flask_app_manager/conf.d/"
-
+CONFIG_DIR = os.getcwd() + "/conf.d/"
 
 class AppConfig(ConfigParser):
     def __init__(self, filename):
