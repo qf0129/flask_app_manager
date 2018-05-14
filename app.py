@@ -103,4 +103,4 @@ if __name__ == '__main__':
         print('please use python3')
     else:
         app = create_app()
-        app.run(host='localhost', port=8080, debug=True)
+        app.run(host='0.0.0.0', port=7000, debug=True)
