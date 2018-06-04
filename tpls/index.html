@@ -2,21 +2,39 @@
 <html>
 <head>
     <title>Index</title>
+     <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.1.1/css/bootstrap.min.css" crossorigin="anonymous">
 </head>
 <body>
-<button class="add_app_btn">add</button>
 <div class="configs_div"></div>
+<button class="btn add_app_btn">add</button>
 
 <script type="text/javascript" src="https://cdn.bootcss.com/jquery/3.3.1/jquery.min.js"></script>
 <script type="text/javascript" src="/static/template.js"></script>
 
 <script type="text/html" id="tpl_config">
 
-    <div>
+    <table class="table">
+        <tr>
+            <th>Name</th>
+            <th>Name</th>
+            <th>Status</th>
+            <th>Options</th>
+            <th>Edit</th>
+        </tr>
         {<each apps>}
-            <div>{<$value.name>}</div>
+            <tr> 
+                <td>{<$value.name>} </td>
+                <td>{<$value.err_list>} </td>
+                <td>{<$value.status>} </td>
+                <td>
+                    <button {<if $value.err_list.length > 0 || $value.status=='running' || $value.status=='stopping'>}disabled{</if>} class="btn" onclick="change_status('{<$value.name>}', 'run')">Run</button>
+                    <button {<if $value.status== 'stopped' || $value.status=='stopping'>}disabled{</if>} class="btn" onclick="change_status('{<$value.name>}', 'stop')">Stop</button>
+                </td>
+                <td><button {<if $value.status=='running'>}disabled{</if>} class="btn" onclick="">Edit</button> </td>
+            </tr>
         {</each>}
-    </div>
+
+    </table>
     
 </script>
 
@@ -33,25 +51,10 @@
             success:function(Data){
                 if (Data.code==0){
 
+                    console.log(Data.apps);
+                    var tpl_config = template('tpl_config', Data);
+                    $('.configs_div').append(tpl_config);
 
-                    var html = template('tpl_config', Data.apps);
-                    $('.configs_div').append(html);
-
-
-                    // for (var i=0;i<Data.apps.length;i++){
-                    //     var app = Data.apps[i];
-                    //     var app_div = $('<div class="app_div"></div>');
-                    //     $('.configs_div').append(app_div);
-                    //     app_div.append('<span>'+app.name+'</span>')
-                    //     app_div.append('<span>  |  </span>')
-                    //     app_div.append('<span>'+app.status+'</span>')
-                    //     app_div.append('<span>  |  </span>')
-                    //     if(app.status=='stopped'){
-                    //         app_div.append('<button onclick="change_status(\''+app.name+'\', \'run\')">run</button>')
-                    //     }else if(app.status=='running'){
-                    //         app_div.append('<button onclick="change_status(\''+app.name+'\', \'stop\')">stop</button>')
-                    //     }
-                    // }
                 }else{
                     alert(Data.msg);
                 }

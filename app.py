@@ -31,7 +31,7 @@ def create_app():
         apps = []
         for config_name in config_names:
             config = ConfigUtil(config_name)
-            err_list = config.check_config
+            err_list = config.check_config()
 
             apps.append({
                 'name': config_name,
@@ -45,14 +45,12 @@ def create_app():
         config_name = request.forms.get('config_name')
         config_status = request.forms.get('config_status')
         if not config_name or not config_status:
-            return dumps({'code': -1})
+            return dumps({'code': -1, 'msg': 'params error'})
 
         if config_status == 'stop':
             t = Thread(target=stop_app,args=(config_name,))
-            # ret = stop_app(config_name)
         if config_status == 'run':
             t = Thread(target=run_app,args=(config_name,))
-            # ret = run_app(config_name)
         t.start()
 
         # if not ret:
@@ -96,10 +94,12 @@ def run_app(config_name):
     venv_name = config.get('default', 'venv_name', 'venv')
     worker_count = config.get('default', 'worker_count', 4)
     host = config.get('default', 'host', '127.0.0.1')
-    port = config.get('default', 'port', '7000')
+    port = config.get('default', 'port', '7001')
     wsgi_file = config.get('default', 'wsgi_file', 'app')
     wsgi_obj = config.get('default', 'wsgi_obj', 'app')
     pid_file = PID_DIR + config_name + '.pid'
+
+    config.set(venv_name=venv_name, worker_count=worker_count, host=host, port=port, wsgi_file=wsgi_file, wsgi_obj=wsgi_obj, pid_file=pid_file)
 
     os.system('/bin/bash scripts/run_app.sh %s %s %s %s %s %s %s %s %s' % (config_name, root_dir, venv_name, worker_count, host, port, wsgi_file, wsgi_obj, pid_file))
     return True

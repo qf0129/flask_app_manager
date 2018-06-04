@@ -1,3 +1,10 @@
 [default]
 root_dir = /home/qf/work/test_bottle/
+venv_name = venv
+worker_count = 4
+host = 127.0.0.1
+port = 7001
+wsgi_file = app
+wsgi_obj = app
+pid_file = /home/qf/work/wsgi_app_manager/pid/test_bottle.pid
 

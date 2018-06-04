@@ -14,9 +14,17 @@ class ConfigUtil:
                 return self.dict[section][key]
         return default
 
+    def set(self, **kw):
+        config = ConfigParser()
+        config.read(CONFIG_DIR + self.config_name)
+        print(kw)
+        for k,v in kw.items():
+            config.set('default', str(k), str(v))
+        config.write(open(CONFIG_DIR + self.config_name, 'w')) 
+
     def check_config(self):
         err_list = []
-        if not os.path.exists(self.dict.root_dir):
+        if not os.path.exists(self.dict['default']['root_dir']):
             err_list.append('root_dir is not exist') 
         return err_list
 
