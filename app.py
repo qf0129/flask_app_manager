@@ -6,7 +6,7 @@ if 'python3' not in sys.executable:
 import os 
 from json import dumps
 from conf_util import ConfigUtil, get_all_configs
-from bottle import Bottle, template, request
+from bottle import Bottle, template, request, static_file
 from threading import Thread
 
 
@@ -17,18 +17,25 @@ def create_app():
 
     app = Bottle()
 
-
     @app.get('/')
     def index():
         return template('tpls/index.html')
+
+    @app.get('/static/<filename>')
+    def get_static_file(filename):
+        return static_file(filename, 'statics')
 
     @app.get('/configs')
     def get_configs():
         config_names = get_all_configs()
         apps = []
         for config_name in config_names:
+            config = ConfigUtil(config_name)
+            err_list = config.check_config
+
             apps.append({
-                'name':config_name,
+                'name': config_name,
+                'err_list': err_list,
                 'status': get_app_status(config_name)})
 
         return dumps({'code':0, 'apps':apps})

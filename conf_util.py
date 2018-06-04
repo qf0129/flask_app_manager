@@ -14,6 +14,12 @@ class ConfigUtil:
                 return self.dict[section][key]
         return default
 
+    def check_config(self):
+        err_list = []
+        if not os.path.exists(self.dict.root_dir):
+            err_list.append('root_dir is not exist') 
+        return err_list
+
     def _get_dict(self):
         ret_dict = {}
         config = ConfigParser()
