@@ -3,6 +3,15 @@
 <head>
     <title>Index</title>
      <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.1.1/css/bootstrap.min.css" crossorigin="anonymous">
+     <style type="text/css">
+         .config_table{
+            border: 0;
+         }
+         .config_table td{
+            padding:0 7px;
+            border-style:none;
+         }
+     </style>
 </head>
 <body>
 <div class="configs_div"></div>
@@ -16,7 +25,8 @@
     <table class="table">
         <tr>
             <th>Name</th>
-            <th>Name</th>
+            <th>Configs</th>
+            <th>Err list</th>
             <th>Status</th>
             <th>Options</th>
             <th>Edit</th>
@@ -24,6 +34,17 @@
         {<each apps>}
             <tr> 
                 <td>{<$value.name>} </td>
+                <td>
+                    <table class="table-bordered config_table">
+                        {<each $value.configs>}
+                        <tr>
+                            <td>{<$index>}</td>
+                            <td>: {<$value>}</td>
+                        </tr>
+                        {</each>}
+                    </table>
+
+                </td>
                 <td>{<$value.err_list>} </td>
                 <td>{<$value.status>} </td>
                 <td>

@@ -31,10 +31,12 @@ def create_app():
         apps = []
         for config_name in config_names:
             config = ConfigUtil(config_name)
+            configs = config.dict['default']
             err_list = config.check_config()
 
             apps.append({
                 'name': config_name,
+                'configs': configs,
                 'err_list': err_list,
                 'status': get_app_status(config_name)})
 
@@ -105,9 +107,5 @@ def run_app(config_name):
     return True
 
 if __name__ == '__main__':
-
-    if 'python3' not in sys.executable:
-        print('please use python3')
-    else:
-        app = create_app()
-        app.run(host='0.0.0.0', port=7000, debug=True)
+    app = create_app()
+    app.run(host='0.0.0.0', port=7000, debug=True)
